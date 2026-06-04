@@ -1,0 +1,39 @@
+name: Build
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: macos-26
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build
+        run: |
+          xcodebuild \
+            -project KeymapOverlay.xcodeproj \
+            -scheme KeymapOverlay \
+            -configuration Release \
+            -derivedDataPath build \
+            CODE_SIGN_IDENTITY="-" \
+            CODE_SIGNING_REQUIRED=YES \
+            CODE_SIGNING_ALLOWED=YES \
+            build
+
+      - name: Package .app
+        run: |
+          APP=$(find build -name "KeymapOverlay.app" -maxdepth 5 | head -1)
+          ditto -c -k --sequesterRsrc --keepParent "$APP" KeymapOverlay.zip
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: KeymapOverlay
+          path: KeymapOverlay.zip
+          retention-days: 30
