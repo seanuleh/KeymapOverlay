@@ -28,9 +28,19 @@ jobs:
             CODE_SIGNING_ALLOWED=YES \
             build
 
-      - name: Package .app
+      - name: Re-sign app bundle
         run: |
           APP=$(find build -name "KeymapOverlay.app" -maxdepth 5 | head -1)
+          # Re-sign all embedded frameworks with the same ad-hoc identity so
+          # Team IDs match (Sparkle ships pre-signed with a different Team ID)
+          find "$APP" -name "*.framework" -o -name "*.dylib" | while read f; do
+            codesign --force --sign - "$f"
+          done
+          codesign --force --sign - --entitlements KeymapOverlay/KeymapOverlay.entitlements "$APP"
+          echo "APP=$APP" >> $GITHUB_ENV
+
+      - name: Package .app
+        run: |
           ditto -c -k --sequesterRsrc --keepParent "$APP" KeymapOverlay.zip
 
       - name: Upload artifact
