@@ -6,9 +6,10 @@ struct KeyboardOverlayView: View {
     var onDismiss: (() -> Void)?
 
     var body: some View {
+        let layout = AppSettings.shared.keyboardLayout
         HStack(spacing: KeyboardMetrics.halfGap) {
-            KeyboardHalfView(half: .left, keys: keymapManager.currentKeys)
-            KeyboardHalfView(half: .right, keys: keymapManager.currentKeys)
+            KeyboardHalfView(half: .left, keys: keymapManager.currentKeys, layout: layout)
+            KeyboardHalfView(half: .right, keys: keymapManager.currentKeys, layout: layout)
         }
         .padding(KeyboardMetrics.overlayPadding)
         .glassEffect(.clear, in: RoundedRectangle(cornerRadius: KeyboardMetrics.overlayCornerRadius))

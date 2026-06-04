@@ -9,6 +9,16 @@ struct SettingsView: View {
     var body: some View {
         Form {
             Section("Keyboard Config") {
+                Picker("Layout", selection: $settings.keyboardLayout) {
+                    ForEach(KeyboardLayoutType.allCases, id: \.self) { layout in
+                        Text(layout.rawValue).tag(layout)
+                    }
+                }
+                .pickerStyle(.segmented)
+                .onChange(of: settings.keyboardLayout) {
+                    keymapManager.reloadLayout()
+                }
+
                 LabeledContent("File path") {
                     HStack {
                         TextField("", text: $settings.configFilePath)

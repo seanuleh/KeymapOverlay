@@ -4,7 +4,7 @@ import SwiftData
 @Observable
 @MainActor
 class KeymapManager {
-    var currentKeys: [KeyDefinition] = CorneLayout.defaultKeys
+    var currentKeys: [KeyDefinition] = AppSettings.shared.keyboardLayout.defaultKeys
     var activeLayerIndex: Int = 0
     var layerNames: [String] = []
     var parseError: String?
@@ -113,8 +113,9 @@ class KeymapManager {
     }
 
     private func recomputeCurrentKeys() {
+        let layout = AppSettings.shared.keyboardLayout
         guard !storedLayers.isEmpty else {
-            currentKeys = CorneLayout.defaultKeys
+            currentKeys = layout.defaultKeys
             return
         }
 
@@ -131,7 +132,11 @@ class KeymapManager {
                 }
             }
         }
-        currentKeys = CorneLayout.keyDefinitions(from: storedLayers[targetIndex], heldBindings: heldBindings)
+        currentKeys = layout.keyDefinitions(from: storedLayers[targetIndex], heldBindings: heldBindings)
+    }
+
+    func reloadLayout() {
+        recomputeCurrentKeys()
     }
 
     // MARK: - File watching
