@@ -12,7 +12,7 @@ jobs:
     runs-on: macos-26
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - name: Build
         run: |
@@ -32,7 +32,7 @@ jobs:
           ditto -c -k --sequesterRsrc --keepParent "$APP" KeymapOverlay.zip
 
       - name: Upload artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: KeymapOverlay
           path: KeymapOverlay.zip
